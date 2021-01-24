@@ -68,6 +68,7 @@ public class DefaultPartitioner implements Partitioner {
             return stickyPartitionCache.partition(topic, cluster);
         }
         // hash the keyBytes to choose a partition
+        //将keyBytes的hash和分区数量进行取余，得到分区位置
         return Utils.toPositive(Utils.murmur2(keyBytes)) % numPartitions;
     }
 

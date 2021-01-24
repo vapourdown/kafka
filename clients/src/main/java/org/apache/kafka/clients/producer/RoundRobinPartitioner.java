@@ -51,13 +51,18 @@ public class RoundRobinPartitioner implements Partitioner {
      */
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
+        //获取topic下所有分区
         List<PartitionInfo> partitions = cluster.partitionsForTopic(topic);
         int numPartitions = partitions.size();
         int nextValue = nextValue(topic);
+        //获取可用分区列表
         List<PartitionInfo> availablePartitions = cluster.availablePartitionsForTopic(topic);
+
+        //如果有可用分区列表
         if (!availablePartitions.isEmpty()) {
             int part = Utils.toPositive(nextValue) % availablePartitions.size();
             return availablePartitions.get(part).partition();
+        //如果没有可用分区列表根据
         } else {
             // no partitions are available, give a non-available partition
             return Utils.toPositive(nextValue) % numPartitions;
